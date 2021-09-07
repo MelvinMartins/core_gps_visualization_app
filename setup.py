@@ -22,12 +22,12 @@ chdir(normpath(join(abspath(__file__), pardir)))
 
 setup(
     name="core_gps_visualization_app",
-    version="1.0.0-beta1",
+    version="1.0.0-alpha1",
     description="GPS Visualization for the core project",
     long_description=long_desc,
     author="NIST IT Lab",
     author_email="itl_inquiries@nist.gov",
-    url="https://github.com/usnistgov/core_gps_visualization_app",
+    url="https://github.com/MelvinMartins/core_gps_visualization_app",
     packages=find_packages(),
     include_package_data=True,
     install_requires=required,
