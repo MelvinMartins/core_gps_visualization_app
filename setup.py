@@ -14,7 +14,7 @@ if exists(reqs_core):
     with open(reqs_core) as f:
         required += f.read().splitlines()
 
-with open(join(dirname(__file__), "README.rst")) as f:
+with open(join(dirname(__file__), "README.md")) as f:
     long_desc = f.read()
 
 # Allow setup.py to be run from any path
