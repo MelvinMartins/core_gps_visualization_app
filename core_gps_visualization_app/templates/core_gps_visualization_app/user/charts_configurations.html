@@ -1,0 +1,25 @@
+{% load staticfiles %}
+
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.2.3.min.js"
+        crossorigin="anonymous"></script>
+
+<form id="select-chart-dropdown-form" method="post" class="select-forms">
+    {% csrf_token %}
+    {{ data.plot_selected }}
+</form>
+
+<form id="select-time-range-dropdown-form" method="post" class="select-forms">
+    {% csrf_token %}
+    {{ data.time_range_selected }}
+</form>
+
+    {% include 'core_gps_visualization_app/common/loading_background.html' %}
+
+<div id="charts" style="resize: both; overflow: auto;">
+    {% include 'core_gps_visualization_app/user/charts.html' %}
+</div>
+

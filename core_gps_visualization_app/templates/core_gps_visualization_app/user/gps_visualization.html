@@ -1,0 +1,15 @@
+{% load staticfiles %}
+
+{% if data.error %}
+    <div class="alert alert-danger">
+      {{data.error}}
+    </div>
+{% else %}
+
+    <div id="header">
+        <h1 class="page-header">GPS Data Overview</h1>
+    </div>
+
+    {% include 'core_gps_visualization_app/user/charts_configurations.html' %}
+
+{% endif %}
