@@ -3,9 +3,6 @@ from core_main_app.commons import exceptions
 from core_gps_visualization_app.utils.parser import stringify, unit_stringify
 from core_gps_visualization_app.utils import parser as utils
 
-import logging
-logger = logging.getLogger(__name__)
-
 
 def plot_layout(plots_type, plots_data):
     """
@@ -17,18 +14,14 @@ def plot_layout(plots_type, plots_data):
     Returns:
 
     """
-    logger.info("visu: inside plot layout")
     hv.extension('bokeh')
 
     if plots_type == 'Scatter':
         layout = plot_scatter(plots_data)
-        logger.info("visu: scatter ok")
     if plots_type == 'Line':
         layout = plot_line(plots_data)
-        logger.info("visu: line ok")
     if plots_type == 'Box':
         layout = plot_box(plots_data)
-        logger.info("visu: box ok")
 
     try:
         return layout
@@ -47,13 +40,11 @@ def plot_layout_by_time_range(plots_data, plots_type, time_range):
     Returns:
 
     """
-    logger.info("visu: inside plot layout by time")
     if plots_type == 'Box' and time_range != "Seconds":
         return 0
     for dict_data in plots_data:
         if dict_data['x'][0] == "Time (UTC)":
             dict_data['data'] = utils.parse_time_range_data(dict_data['data'], time_range)
-            logger.info("visu: parse time range ok")
     return plot_layout(plots_type, plots_data)
 
 
@@ -66,8 +57,6 @@ def plot_scatter(plots_data):
     Returns:
 
     """
-    logger.info("visu: inside scatter ")
-    logger.info("visu: " + str(plots_data))
     already_plot = []
     all_scatter_plots = []
     len_plots = 0
