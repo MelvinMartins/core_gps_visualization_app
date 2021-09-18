@@ -23,23 +23,41 @@ def build_visualization_data():
         logger.info("Periodic task: START creating plots objects")
 
         all_parsed_data = operations.get_all_data()
+
+        logger.info("visu: got all data")
+
         all_parsed_data = operations.parse_all_data(all_parsed_data)
+
+        logger.info("visu: parsed all data")
+
+
         plots_object = plots_api.create_and_get_plots(all_parsed_data)
+
+        logger.info("visu: created plots object")
+
         plots_types = SelectPlotDropDown().fields['plots'].choices
         time_ranges = SelectTimeRangeDropDown().fields['time_ranges'].choices
+
+        logger.info("visu: ok for dropdown")
 
         for plots_type_tuple in plots_types:
             for time_range_tuple in time_ranges:
                 config = str(plots_type_tuple[0]) + ',' + str(time_range_tuple[0])
                 plots_data = copy.deepcopy(plots_api.get_plots_data(plots_object))
+                logger.info("visu: deep copy ok")
                 layout = plots_operations.plot_layout_by_time_range(plots_data, plots_type_tuple[0], time_range_tuple[0])
+                logger.info("visu: plot layout " + plots_type_tuple[0] + " " + time_range_tuple[0] + " ok")
                 if layout != 0:
                     hv.save(layout, "temp.html")
+                    logger.info("visu: save ok")
                     chart_file = open("temp.html", 'r')
+                    logger.info("visu: open ok")
                     chart_html = chart_file.read()
+                    logger.info("visu: read ok")
                 else:
                     chart_html = "<html><p>No charts for this configuration...</p></html>"
                 plots_api.create_config(plots_object, config, chart_html)
+                logger.info("visu: create config ok")
         plots_api.update_completed(plots_object)
 
         logger.info("Periodic task: FINISH creating plots objects " +
