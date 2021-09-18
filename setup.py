@@ -22,7 +22,7 @@ chdir(normpath(join(abspath(__file__), pardir)))
 
 setup(
     name="core_gps_visualization_app",
-    version="1.0.1a2",
+    version="1.0.1a3",
     description="GPS Visualization for the core project",
     long_description=long_desc,
     author="NIST IT Lab",
