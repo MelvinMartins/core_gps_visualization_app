@@ -34,22 +34,13 @@ def build_visualization_data():
                 plots_data = copy.deepcopy(plots_api.get_plots_data(plots_object))
                 layout = plots_operations.plot_layout_by_time_range(plots_data, plots_type_tuple[0], time_range_tuple[0])
                 if layout != 0:
-                    logger.info("visu: ready to save")
-                    try:
-                        hv.save(layout, "temp.html")
-                        logger.info("visu: save ok")
-                    except Exception as e:
-                        print('failed save')
-                        print(e)
-                        
-                    chart_file = open("temp.html", 'r')
-                    logger.info("visu: open ok")
-                    chart_html = chart_file.read()
-                    logger.info("visu: read ok")
+                    renderer = hv.renderer('bokeh')
+                    hvplot = renderer.get_plot(layout)
+                    hvplot.state
+                    html = renderer._figure_data(hvplot, 'html')
                 else:
-                    chart_html = "<html><p>No charts for this configuration...</p></html>"
-                plots_api.create_config(plots_object, config, chart_html)
-                logger.info("visu: create config ok")
+                    chart_html = "<p>No charts for this configuration...</p>"
+                plots_api.create_config(plots_object, config, html)
         plots_api.update_completed(plots_object)
 
         logger.info("Periodic task: FINISH creating plots objects " +
