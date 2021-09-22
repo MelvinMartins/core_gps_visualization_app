@@ -5,7 +5,7 @@
  */
 var onTimeRangeChanged = function(event){
     showVisuLoadingSpinner();
-    document.getElementById("charts").style.visibility = "hidden";
+    document.getElementById('charts').innerHTML = "";
     time_range_selected = $("#select-time-range-dropdown-form :selected").attr("value");
     console.log(time_range_selected);
     $.ajax({

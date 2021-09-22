@@ -7,8 +7,6 @@ from celery import shared_task
 
 from core_gps_visualization_app.components.plots import api as plots_api
 from core_gps_visualization_app.components.data import operations
-from core_gps_visualization_app.components.plots import operations as plots_operations
-from core_gps_visualization_app.views.user.forms import SelectPlotDropDown, SelectTimeRangeDropDown
 
 logger = logging.getLogger(__name__)
 
@@ -25,22 +23,6 @@ def build_visualization_data():
         all_parsed_data = operations.get_all_data()
         all_parsed_data = operations.parse_all_data(all_parsed_data)
         plots_object = plots_api.create_and_get_plots(all_parsed_data)
-        plots_types = SelectPlotDropDown().fields['plots'].choices
-        time_ranges = SelectTimeRangeDropDown().fields['time_ranges'].choices
-
-        for plots_type_tuple in plots_types:
-            for time_range_tuple in time_ranges:
-                config = str(plots_type_tuple[0]) + ',' + str(time_range_tuple[0])
-                plots_data = copy.deepcopy(plots_api.get_plots_data(plots_object))
-                layout = plots_operations.plot_layout_by_time_range(plots_data, plots_type_tuple[0], time_range_tuple[0])
-                if layout != 0:
-                    renderer = hv.renderer('bokeh')
-                    hvplot = renderer.get_plot(layout)
-                    hvplot.state
-                    html = renderer._figure_data(hvplot, 'html')
-                else:
-                    chart_html = "<p>No charts for this configuration...</p>"
-                plots_api.create_config(plots_object, config, html)
         plots_api.update_completed(plots_object)
 
         logger.info("Periodic task: FINISH creating plots objects " +

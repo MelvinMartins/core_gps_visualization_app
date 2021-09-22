@@ -9,7 +9,7 @@ var hideVisuLoadingSpinner = function() {
 }
 
 var loadInitialPlots = function(event){
-   document.getElementById("charts").style.visibility = "hidden";
+   document.getElementById('charts').innerHTML = "";
    showVisuLoadingSpinner();
    $.ajax({
     url:"load-initial-plots",

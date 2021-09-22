@@ -5,7 +5,7 @@
  */
 var onChartChanged = function(event){
     showVisuLoadingSpinner();
-    document.getElementById("charts").style.visibility = "hidden";
+    document.getElementById('charts').innerHTML = "";
     plot_selected = $("#select-chart-dropdown-form :selected").attr("value");
     console.log(plot_selected);
     $.ajax({
