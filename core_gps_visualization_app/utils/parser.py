@@ -2,8 +2,10 @@
 
 import copy
 import re
+import sys
+
 import core_gps_visualization_app.data_config as config
-from datetime import datetime, timedelta
+from datetime import datetime
 import statistics
 
 
@@ -414,3 +416,21 @@ def parse_time_range_data(list_of_tuples_data, time_range):
         updated_data.append((x, y))
 
     return updated_data
+
+
+def get_size(list_charts):
+    """ We can't get the size in bytes for a list of dicts, nor tuples. In some examples, we measured a size of
+    about 3 millions with this method is about the max size of a document in MongoDB (16MB)
+
+    Args:
+        list_charts:
+
+    Returns: the sum of the size of all data lists in a list of chart dicts
+
+    """
+    size = 0
+    for chart_dict in list_charts:
+        size += sys.getsizeof(chart_dict['data'])
+
+    return size
+
