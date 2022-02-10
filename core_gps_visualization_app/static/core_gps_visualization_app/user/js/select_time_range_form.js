@@ -4,8 +4,8 @@
  * Update selected time range
  */
 var onTimeRangeChanged = function(event){
+    document.getElementById("visualization").style.visibility = "hidden";
     showVisuLoadingSpinner();
-    document.getElementById('charts').innerHTML = "";
     time_range_selected = $("#select-time-range-dropdown-form :selected").attr("value");
     console.log(time_range_selected);
     $.ajax({
@@ -16,11 +16,16 @@ var onTimeRangeChanged = function(event){
         },
         success: function(data){
             hideVisuLoadingSpinner();
-            // update two other forms, not applicable if boxplot
             // Refresh plots after they were updated
-            var charts = data.charts_html;
-            $("#charts").html(charts);
-            document.getElementById("charts").style.visibility = "visible";
+            if (data.script === '404') {
+                document.getElementById("charts404").style.visibility = "visible";
+                document.getElementById('charts404').style.height = "200px";
+                }
+            else {
+                $("#visualization").html(data.script);
+                document.getElementById('charts404').style.height = "0px";
+                }
+            document.getElementById("visualization").style.visibility = "visible";
         },
         error: function(data){
             console.log("Error");

@@ -1,23 +1,21 @@
-{% load staticfiles %}
+<div id="chart-configuration">
 
-<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.2.3.min.js"></script>
-<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.2.3.min.js"></script>
-<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.2.3.min.js"></script>
-<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-api-2.2.3.min.js"></script>
+    <form id="select-x-dropdown-form" method="post" class="forms-visu">
+        {% csrf_token %}
+        {{ data.x_parameter }}
+    </form>
 
-<form id="select-chart-dropdown-form" method="post" class="select-forms">
-    {% csrf_token %}
-    {{ data.plot_selected }}
-</form>
+    <form id="select-y-dropdown-form" method="post" class="forms-visu">
+        {% csrf_token %}
+        {{ data.y_parameter }}
+    </form>
 
-<form id="select-time-range-dropdown-form" method="post" class="select-forms">
-    {% csrf_token %}
-    {{ data.time_range_selected }}
-</form>
+    <form id="select-documents-checkbox-form" method="post" class="forms-visu">
+        {% csrf_token %}
+        {{ data.data_source }}
+    </form>
 
-    {% include 'core_gps_visualization_app/common/loading_background.html' %}
+    <button id="validate" type="button" class="btn btn-secondary btn-lg btn-visu">Validate</button>
 
-<div id="charts" style="resize: both; overflow: auto;">
-    {% include 'core_gps_visualization_app/user/charts.html' %}
 </div>
 

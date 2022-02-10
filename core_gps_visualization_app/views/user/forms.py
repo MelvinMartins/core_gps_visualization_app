@@ -2,31 +2,40 @@
 from django import forms
 
 
-class SelectPlotDropDown(forms.Form):
-    """Form to select what chart to display
+class SelectXParameterDropDown(forms.Form):
+    """Form to select X parameter for the chart
 
     """
-    plots = forms.ChoiceField(label='Change plot ', required=True, widget=forms.Select())
+    x_parameters = forms.ChoiceField(label='Select X', required=True, widget=forms.Select())
 
-    def __init__(self, *args):
-        super(SelectPlotDropDown, self).__init__(*args)
-        plots = [('Scatter', 'Scatter'), ('Line', 'Line'), ('Box', 'Box')]
-        selected = plots[0]
-        if plots:
-            self.fields['plots'].choices = plots
-        if selected:
-            self.fields['plots'].initial = [selected]
+    def __init__(self, params, *args):
+        super(SelectXParameterDropDown, self).__init__(*args)
+        x_parameters = params
+        self.initial['x_parameters'] = [x_parameters[0][0]]
+        self.fields['x_parameters'].choices = x_parameters
 
 
-class SelectTimeRangeDropDown(forms.Form):
-    """Form to select a different time range for the charts
+class SelectYParameterDropDown(forms.Form):
+    """Form to select Y parameter for the chart
 
     """
-    time_ranges = forms.ChoiceField(label='Select time range ', required=True, widget=forms.Select())
+    y_parameters = forms.ChoiceField(label='Select Y', required=True, widget=forms.Select())
 
-    def __init__(self, *args):
-        super(SelectTimeRangeDropDown, self).__init__(*args)
-        time_ranges = [('Seconds', 'Seconds'), ('Minutes', 'Minutes'), ('Hours', 'Hours'), ('Days', 'Days')]
-        selected = time_ranges[0]
-        self.fields['time_ranges'].choices = time_ranges
-        self.fields['time_ranges'].initial = [selected]
+    def __init__(self, params, *args):
+        super(SelectYParameterDropDown, self).__init__(*args)
+        y_parameters = params
+        self.initial['y_parameters'] = [y_parameters[0][0]]
+        self.fields['y_parameters'].choices = y_parameters
+
+
+class SelectDataSourceCheckBox(forms.Form):
+    """Form to select data source to pull data from for the chart
+
+    """
+    data_source = forms.MultipleChoiceField(label='Select Data Source', required=False, widget=forms.CheckboxSelectMultiple())
+
+    def __init__(self, source, *args):
+        super(SelectDataSourceCheckBox, self).__init__(*args)
+        self.initial['data_source'] = source
+        self.fields['data_source'].choices = [(source[i], source[i]) for i in range(0, len(source))]
+
