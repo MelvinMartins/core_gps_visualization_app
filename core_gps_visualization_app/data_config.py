@@ -1,162 +1,95 @@
 """Data config file"""
 
 
-# Configure visualizations when 1 set (x,y) per XML document
-# Need to gather all XML documents for 1 plot
+# Configure visualizations
+# 1 XML file = All data (sorted) for a single parameter associated with a variable.
+
+# Example1: Experience that measure temperature over time would have time as variable and temperature as parameter.
+# Example2: Experience that measure Oxygen level in function of elevation would have
+# oxygen as parameter and elevation as variable.
+
+# If too much data for a single file, can be split in 'parts'
 
 # In the path, '.' starts a dict
 # In the path, '/' starts a list of dicts
 
-# List of dicts
-# Each dict defined will be a plot
-# X and Y parameters have to be defined, has to be a 'parameterName' from config_parameters
-# 'idsNames' is optional, default value will be intersection of 'idsNames' from both parameters
 
-# Time has to be under UTC format and has to be named "Time (UTC)" for the time range selection to work properly
+# 'info_parameters' defines where to find the parameters names in the schema (ie. what can be a 'xName' or an 'yName')
+# 'parameterPartPath' can be found when a single parameter is split in different documents
+# (example: all data for a parameter named 'temperature' would be more than the 16MB document size limit on MongoDB
+# So it is split in several documents)
+info_parameters = {
+    'parameterNamePath': 'data.parameterInfo.parameterName',
+    'parameterUnitPath': 'data.parameterInfo.unit',
+    'parameterPartPath': 'data.parameterInfo.part',
+    'variablePath': 'data.parameterValues.time',
+    'valuePath': 'data.parameterValues.value'
+}
 
-config_charts = [
-    {
-        'xName': 'Time (UTC)',
-        'yName': 'Elevation',
-    },
-    {
-        'xName': 'Time (UTC)',
-        'yName': 'Azimuth',
-    },
-    {
-        'xName': 'Time (UTC)',
-        'yName': 'CNO',
-    },
-    {
-        'xName': 'Time (UTC)',
-        'yName': 'Residual',
-    },
-    {
-        'xName': 'Elevation',
-        'yName': 'Azimuth',
-        'idsName': ['Satellite'],
-    },
-    {
-        'xName': 'Elevation',
-        'yName': 'CNO',
-    },
-    {
-         'xName': 'Time (UTC)',
-         'yName': 'Time Offset',
-    },
-]
+# One variable per instance is supported
+# Schema doesn't need to define the variable name
+variable = 'Time (UTC)'
 
 
-# Each plotable parameter
-# They can be part of different schemas from the DB
-# 'parameterName' will appear on the plot to define the parameter
-# 'idsNames' is None or a List, each element of the list has to be an 'idName' from config_ids
-# 'idsNames' are used to group elements (will appear in different colors / shapes on charts)
-# If a same parameter is present on two or more schema, 'parameterPath' has to be a list of all those paths
-# 'unitPath' is optional
-# 'variablePath' is optional but can define the variable parameter of an experiment
-config_parameters = [
+# 'list_parameters' defines the 'parameterName' that will match with what can be found at the 'parameterNamePath'
+# 'displayName' is what will be displayed on the visualization to describe the 'parameterName'
+list_parameters = [
     {
-        'parameterName': 'Time (UTC)',
-        'idsNames': [],
-        # Same variable on two different schemas
-        'parameterPath': ['data.receiver.time/utc.value', 'timeintervalcounterdata.timeintervalcounter/startdate'],
-        'unitPath': None,
-        'variablePath': None
+        'parameterName': 'clkacc',
+        'displayName': 'Clock Accuracy',
     },
     {
-        'parameterName': 'Clock Accuracy',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/clkacc.value',
-        'unitPath': 'data.receiver.time/clkacc.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'clkbias',
+        'displayName': 'Clock Bias',
     },
     {
-        'parameterName': 'Clock Bias',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/clkbias.value',
-        'unitPath': 'data.receiver.time/clkbias.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'clkdrift',
+        'displayName': 'Clock Drift',
     },
     {
-        'parameterName': 'Clock Drift',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/clkdrift.value',
-        'unitPath': 'data.receiver.time/clkdrift.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'pdop',
+        'displayName': 'PDOP',
     },
     {
-        'parameterName': 'PDOP',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/pdop.value',
-        'unitPath': None,
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'tm0rising',
+        'displayName': 'TM0 Rising',
     },
     {
-        'parameterName': 'TM0 Rising',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/tm0rising.tm0value',
-        'unitPath': None,
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'tpqerr',
+        'displayName': 'TP Qerr',
     },
     {
-        'parameterName': 'TPQerr',
-        'idsNames': ['Data Origin'],
-        'parameterPath': 'data.receiver.time/tpqerr.value',
-        'unitPath': 'data.receiver.time/tpqerr.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'elevation',
+        'displayName': 'Elevation',
     },
     {
-        'parameterName': 'Elevation',
-        'idsNames': ['Satellite', 'Data Origin'],
-        'parameterPath': 'data.receiver.satellites.satellite/elevation.value',
-        'unitPath': 'data.receiver.satellites.satellite/elevation.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'azimuth',
+        'displayName': 'Azimuth',
     },
     {
-        'parameterName': 'Azimuth',
-        'idsNames': ['Satellite', 'Data Origin'],
-        'parameterPath': 'data.receiver.satellites.satellite/azimuth.value',
-        'unitPath': 'data.receiver.satellites.satellite/azimuth.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'cno',
+        'displayName': 'CNO',
     },
     {
-        'parameterName': 'CNO',
-        'idsNames': ['Satellite', 'Data Origin'],
-        'parameterPath': 'data.receiver.satellites.satellite/cno.value',
-        'unitPath': 'data.receiver.satellites.satellite/cno.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'residual',
+        'displayName': 'Residual',
     },
     {
-        'parameterName': 'Residual',
-        'idsNames': ['Satellite', 'Data Origin'],
-        'parameterPath': 'data.receiver.satellites.satellite/residual.value',
-        'unitPath': 'data.receiver.satellites.satellite/residual.unit',
-        'variablePath': 'data.receiver.time/utc.value',
+        'parameterName': 'counter',
+        'displayName': 'Counter',
     },
     {
-        'parameterName': 'Counter',
-        'idsNames': [],
-        'parameterPath': 'timeintervalcounterdata.timeintervalcounter/counter.countervalue',
-        'unitPath': 'timeintervalcounterdata.timeintervalcounter/counter.unit',
-        'variablePath': 'timeintervalcounterdata.timeintervalcounter/startdate',
-    },
-    {
-        'parameterName': 'Time Offset',
-        'idsNames': [],
-        'parameterPath': 'timeintervalcounterdata.timeintervalcounter/timeoffset.timeoffsetvalue',
-        'unitPath': 'timeintervalcounterdata.timeintervalcounter/timeoffset.unit',
-        'variablePath': 'timeintervalcounterdata.timeintervalcounter/startdate',
+        'parameterName': 'timeoffset',
+        'displayName': 'Time Offset',
     }]
 
+# Path where the data source is indicated
+# Several MongoDB docs might share the same data source
+info_data_source = {'dataSourcePath': 'data.parameterIds.dataOriginID'}
 
 # 'idName' will appear on the plot to define a group
-config_ids = [
+ids_parameters = [
     {
         'idName': 'Satellite',
-        'idPath': 'data.receiver.satellites.satellite/satelliteID',
-    },
-    {
-        'idName': 'Data Origin',
-        'idPath': 'data.receiver.receiverinfo.id',
+        'idPath': 'data.parameterIds.satelliteID',
     }]

@@ -4,8 +4,8 @@
  * Update selected chart
  */
 var onChartChanged = function(event){
+    document.getElementById("visualization").style.visibility = "visible";
     showVisuLoadingSpinner();
-    document.getElementById("charts").style.visibility = "hidden";
     plot_selected = $("#select-chart-dropdown-form :selected").attr("value");
     console.log(plot_selected);
     $.ajax({
@@ -16,11 +16,15 @@ var onChartChanged = function(event){
         },
         success: function(data){
             hideVisuLoadingSpinner();
-            // update two other forms, not applicable if boxplot
             // Refresh plots after they were updated
-            var charts = data.charts_html;
-            $("#charts").html(charts);
-            document.getElementById("charts").style.visibility = "visible";
+            if (data.script === '404') {
+                document.getElementById("charts404").style.visibility = "visible";
+                document.getElementById('charts404').style.height = "200px";
+                }
+            else {
+                $("#visualization").html(data.script);
+                document.getElementById('charts404').style.height = "0px";
+            }
         },
         error: function(data){
             console.log("Error");

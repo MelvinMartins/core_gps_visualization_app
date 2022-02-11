@@ -5,7 +5,7 @@ import logging
 from django.contrib.auth.models import Group, Permission
 
 import core_main_app.permissions.rights as main_rights
-import core_gps_visualization_app.permissions.rights as visualization_rights
+import core_gps_visualization_app.rights as visualization_rights
 
 logger = logging.getLogger(__name__)
 

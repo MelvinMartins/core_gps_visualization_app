@@ -17,5 +17,5 @@ class GpsVisualizationAppConfig(AppConfig):
 
         """
         if "migrate" not in sys.argv:
-            import core_gps_visualization_app.permissions.discover as discover
+            import core_gps_visualization_app as discover
             discover.init_permissions()

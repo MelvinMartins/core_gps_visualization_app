@@ -1,144 +1,137 @@
-from core_gps_visualization_app.components.plots.models import Plots
+from core_gps_visualization_app.components.plots.models import Plots, Configurations
 
 
-def create_and_get_plots(all_data):
-    """ There is maximum a single plots object at any time
-
-    Args:
-        all_data:
+def configurations_exist():
+    """
 
     Returns:
 
     """
-    plots = Plots.objects.all()
-    if len(plots) == 0:
-        Plots.create_plots(all_data)
-        plots = get_plots()
-        return plots
+    if len(Configurations.objects.all()) == 0:
+        return False
+    return True
+
+
+def create_configurations(x_parameter, y_parameter, data_sources):
+    """
+
+    Args:
+        x_parameter:
+        y_parameter:
+        data_sources:
+
+    Returns:
+
+    """
+    return Configurations.create_configurations(x_parameter, y_parameter, data_sources)
+
+
+def update_configurations(x_parameter, y_parameter, data_sources):
+    """
+
+    Args:
+        x_parameter:
+        y_parameter:
+        data_sources:
+
+    Returns:
+
+    """
+    if configurations_exist():
+        configurations = get_configurations()
+        return configurations.update_configurations(x_parameter, y_parameter, data_sources)
     else:
-        return plots[0]
+        return create_configurations(x_parameter, y_parameter, data_sources)
 
 
-def get_plots():
-    """ get unique plots object if it exists, otherwise get None
-
-    Returns:
-
-    """
-    plots = Plots.objects.all()
-    if len(plots) > 0:
-        return plots[0]
-    return None
+def get_configurations():
+    return Configurations.get_configurations()
 
 
-def update_plot_selected(plots, plot_name):
-    """ Update the type of plot selected for all plots
-
-    Args:
-        plots:
-        plot_name:
-
-    Returns:
-
-    """
-    return Plots.update_plot_selected(plots, plot_name)
+def get_x_parameter():
+    configurations = get_configurations()
+    return configurations.x_parameter
 
 
-def update_time_range_selected(plots, time_range):
-    """ Update the time range selected for all plots
-
-    Args:
-        plots:
-        time_range
-
-    Returns:
-
-    """
-    return Plots.update_time_range_selected(plots, time_range)
+def get_y_parameter():
+    configurations = get_configurations()
+    return configurations.y_parameter
 
 
-def get_plot_selected(plots):
-    """
-
-    Returns:
-
-    """
-    return Plots.get_plot_selected(plots)
+def get_data_sources():
+    configurations = get_configurations()
+    return configurations.data_sources
 
 
-def get_time_range_selected(plots):
-    """
-
-    Returns:
-
-    """
-    return Plots.get_time_range_selected(plots)
-
-
-def get_plots_data(plots):
-    """
-
-    Returns:
-
-    """
-    return Plots.get_plots_data(plots)
-
-
-def get_default_config(plots):
+def create_plots(list_of_charts, x_parameter, y_parameter, data_sources):
     """
 
     Args:
-        plots:
+        list_of_charts:
+        x_parameter:
+        y_parameter:
+        data_sources:
 
     Returns:
 
     """
-    return Plots.get_default_config(plots)
+    config = [{'x_parameter': x_parameter}, {'y_parameter': y_parameter}, {'data_sources': data_sources}]
+    return Plots.create_plots(list_of_charts, config)
 
 
-def config_exists(plots, config):
+def get_plots_data(x_parameter, y_parameter, data_sources):
+    """
+
+    Returns:
+
+    """
+    data = []  # list of chart dicts
+    config = [{'x_parameter': x_parameter}, {'y_parameter': y_parameter}, {'data_sources': data_sources}]
+    plots_objects = get_plots(config=config)
+
+    # if more than a document, we have to merge them
+    if len(plots_objects) > 1:
+        ids = []
+        for plots_object in plots_objects:
+            plots_data_list = Plots.get_plots_data(plots_object)
+            for plots_data_dict in plots_data_list:
+                # Plots data sharing same ids had to be split in several docs
+                if plots_data_dict['ids'] in ids:
+                    for data_dict in data:
+                        if data_dict['ids'] == plots_data_dict['ids']:
+                            data_dict['data'] += plots_data_dict['data']
+                # plots data sharing only config had to be split in several docs
+                else:
+                    data.append(plots_data_dict)
+                    ids.append(plots_data_dict['ids'])
+
+    else:
+        data = Plots.get_plots_data(plots_objects[0])
+    return data
+
+
+def get_plots(config):
+    """
+
+    Returns: list of plots objects
+
+    """
+    return Plots.get_plots(config)
+
+
+def plots_exist(x_parameter, y_parameter, data_sources):
     """
 
     Args:
-        plots:
-        config:
+        x_parameter:
+        y_parameter:
+        data_sources:
 
     Returns:
 
     """
-    return Plots.config_exists(plots, config)
+    config = [{'x_parameter': x_parameter}, {'y_parameter': y_parameter}, {'data_sources': data_sources}]
+    if len(Plots.objects.filter(config=config)) == 0:
+        return False
+    return True
 
-
-def get_html(plots, config):
-    """
-
-    Args:
-        plots:
-        config:
-
-    Returns:
-
-    """
-    return Plots.get_html(plots, config)
-
-
-def create_config(plots, config, html):
-    """
-
-    Args:
-        plots:
-        config:
-        html:
-
-    Returns:
-
-    """
-    return Plots.create_config(plots, config, html)
-
-
-def is_completed(plots):
-    return Plots.is_completed(plots)
-
-
-def update_completed(plots):
-    return Plots.update_completed(plots)
