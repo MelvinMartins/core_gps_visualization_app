@@ -18,19 +18,11 @@ var loadInitialPlots = function(event){
     url:"load-initial-plots",
     success: function(data) {
         console.log("Success");
-        if (data.script === '404') {
-            document.getElementById("charts404").style.visibility = "visible";
-            document.getElementById('charts404').style.height = "200px";
-        }
-        else {
-            $("#visualization").html(data.script);
-            hideVisuLoadingSpinner();
-            document.getElementById('charts404').style.height = "0px";
-            }
+        $("#visualization").html(data.script);
+        hideVisuLoadingSpinner();
      },
     error:function(){
            console.log("Error");
-           $('#charts').html("Uh oh! An error has occurred. Please check back later...");
     }
     });
  }

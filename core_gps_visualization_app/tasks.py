@@ -2,6 +2,9 @@
 import logging
 import time
 from celery import shared_task
+from core_gps_visualization_app.components.plots import api
+from core_gps_visualization_app.utils import data_utils as utils
+from core_gps_visualization_app.components.data.data_operations import parse_data
 
 logger = logging.getLogger(__name__)
 

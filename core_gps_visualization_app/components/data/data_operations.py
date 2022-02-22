@@ -2,7 +2,6 @@
 
 from core_gps_visualization_app import data_config as data_config
 from core_gps_visualization_app.utils import data_utils as utils
-from core_gps_visualization_app.components.plots import api
 
 
 def parse_data(all_data, x_parameter, y_parameter, data_sources):
@@ -22,7 +21,6 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
     list_of_charts = []
 
     # data config instantiate
-    xy_charts = data_config.xy_charts
     info_parameters = data_config.info_parameters
     list_parameters = data_config.list_parameters
     ids_parameters = data_config.ids_parameters
@@ -111,11 +109,15 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
                     x_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
                     x_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
                     x_ids = utils.get_parameter_ids(dict_content, ids_parameters)
+                    part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+                    if part is None:
+                        part = 0
 
                     x_dict = {
                         'x': (x_display_name, x_unit),
                         'ids': x_ids,
-                        'data': x_data  # [{var1: x1}, {var2: x2}, etc]
+                        'data': x_data,  # [{var1: x1}, {var2: x2}, etc]
+                        'part': part
                     }
 
                     all_x_dicts.append(x_dict)
@@ -126,11 +128,15 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
                     y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
                     y_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
                     y_ids = utils.get_parameter_ids(dict_content, ids_parameters)
+                    part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+                    if part is None:
+                        part = 0
 
                     y_dict = {
                         'y': (y_display_name, y_unit),
                         'ids': y_ids,
-                        'data': y_data
+                        'data': y_data,
+                        'part': part
                     }
 
                     all_y_dicts.append(y_dict)
@@ -139,7 +145,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
         for x_dict in all_x_dicts:
             for y_dict in all_y_dicts:
                 # 1 chart per group
-                if utils.is_same_group(x_dict, y_dict):
+                if utils.is_same_group(x_dict, y_dict) and x_dict['part'] == y_dict['part']:
                     data = []
                     for k in sorted(x_dict['data']):
                         if k in y_dict['data']:

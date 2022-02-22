@@ -224,14 +224,14 @@ def get_chart_data(dict_content, info_parameters):
 
 
 def get_variable():
-    variable = data_config2.variable
+    variable = data_config.variable
     variable_tuple = (variable, variable)
     return [variable_tuple]
 
 
 def get_parameters():
     result = []
-    parameters = data_config2.list_parameters
+    parameters = data_config.list_parameters
     for parameter_dict in parameters:
         result.append((parameter_dict['parameterName'], parameter_dict['displayName']))
 
