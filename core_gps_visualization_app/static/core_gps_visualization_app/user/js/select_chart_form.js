@@ -17,14 +17,7 @@ var onChartChanged = function(event){
         success: function(data){
             hideVisuLoadingSpinner();
             // Refresh plots after they were updated
-            if (data.script === '404') {
-                document.getElementById("charts404").style.visibility = "visible";
-                document.getElementById('charts404').style.height = "200px";
-                }
-            else {
-                $("#visualization").html(data.script);
-                document.getElementById('charts404').style.height = "0px";
-            }
+            $("#visualization").html(data.script);
         },
         error: function(data){
             console.log("Error");

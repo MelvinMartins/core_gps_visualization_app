@@ -44,7 +44,7 @@ def plot_layout_by_time_range(plots_data, plots_type, time_range):
 
     """
     for dict_data in plots_data:
-        if dict_data['x'][0] == "Time (UTC)":
+        if dict_data['x'][0] == "Time (UTC)" and time_range != "Seconds":
             dict_data['data'] = utils.parse_time_range_data(dict_data['data'], time_range)
     return plot_layout(plots_type, plots_data)
 

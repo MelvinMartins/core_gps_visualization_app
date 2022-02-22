@@ -1,6 +1,6 @@
 """ Data parser utils test class"""
 
-from core_gps_visualization_app.components.data.operations import parse_all_data
+from core_gps_visualization_app.components.data.data_operations import parse_data
 from core_gps_visualization_app.utils import parser
 from datetime import datetime
 import unittest
@@ -219,15 +219,6 @@ class TestParseAllData(unittest.TestCase):
             'data': [(parser.parse_date("2021-03-01T13:45:34"), 53.864),
                      (parser.parse_date("2021-03-01T13:45:39"), 49.786)]
         }
-
-    def test_parse_all_data(self):
-        parsed_data = parse_all_data(all_data, config_charts, config_parameters, config_ids)
-        self.assertTrue(parsed_data == self.expected_result)
-
-    def test_parse_all_data_different_schemas(self):
-        parsed_data = parse_all_data(all_data, config_charts_different_schemas, config_parameters, config_ids)
-        self.expected_result.append(self.additional_result)
-        self.assertTrue(parsed_data == self.expected_result)
 
 
 class TestParseValueByPath(unittest.TestCase):

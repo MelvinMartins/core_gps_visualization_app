@@ -8,7 +8,7 @@ hv.extension('bokeh')
 
 class Chart(param.Parameterized):
     plot_selected = param.Selector(default="Scatter", objects=["Scatter", "Line"])
-    time_selected = param.Selector(default="Minutes", objects=["Seconds", "Minutes", "Hours", "Days"])
+    time_selected = param.Selector(default="Seconds", objects=["Seconds", "Minutes", "Hours", "Days"])
 
     def __init__(self, **params):
         super().__init__(**params)
@@ -18,6 +18,8 @@ class Chart(param.Parameterized):
         self.plot_selected = self.plot_selected
         self.time_selected = self.time_selected
         visualization_data = build_visualization_data()
+        if visualization_data is None:
+            visualization_data = []
         if len(visualization_data) == 0:
             return '# No charts for this configuration...'
         chart = plot_layout_by_time_range(visualization_data, self.plot_selected, self.time_selected)
