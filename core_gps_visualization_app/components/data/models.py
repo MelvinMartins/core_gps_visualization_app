@@ -20,7 +20,7 @@ class DataSources(Document):
 
         """
         data_sources = []
-        data_source_path = data_config2.info_data_source['dataSourcePath']
+        data_source_path = data_config.info_data_source['dataSourcePath']
 
         all_data = utils.get_all_data()
         for xml_file in all_data:
