@@ -12,6 +12,7 @@ class DataSources(Document):
 
     """
     data_sources = fields.ListField(blank=False)
+    total_documents = fields.IntField(blank=False)
 
     @staticmethod
     def create_data_sources():
@@ -23,13 +24,14 @@ class DataSources(Document):
         data_source_path = data_config.info_data_source['dataSourcePath']
 
         all_data = utils.get_all_data()
+        total_documents = len(all_data)
         for xml_file in all_data:
             dict_content = xml_file['dict_content']
             data_source = utils.get_value_by_path(dict_content, data_source_path)
             if data_source not in data_sources:
                 data_sources.append(data_source)
 
-        return DataSources.objects.create(data_sources=data_sources)
+        return DataSources.objects.create(data_sources=data_sources, total_documents=total_documents)
 
     @staticmethod
     def update_data_sources():
@@ -49,6 +51,7 @@ class DataSources(Document):
         """
         if len(DataSources.objects.all()) == 0:
             DataSources.create_data_sources()
+        if utils.is_total_documents_changed(DataSources.objects.all()[0].total_documents):
+            DataSources.update_data_sources()
         data_sources_object = DataSources.objects.all()[0]
         return data_sources_object.data_sources
-
