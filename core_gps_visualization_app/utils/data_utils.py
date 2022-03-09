@@ -18,6 +18,19 @@ def get_all_data():
 
     return all_data
 
+def is_total_documents_changed(data_sources_documents):
+    """ Compare the number of documents currently in the DB to the number of documents used by out Data source object
+
+    Args:
+        data_sources_documents:
+
+    Returns:
+
+    """
+    all_data = get_all_data()
+    current_documents = len(all_data)
+    return current_documents != data_sources_documents
+
 ###TODO
 def update_data_part(all_data, x_or_y_dict, part):
     # for data that are split in different files,
