@@ -46,7 +46,5 @@ class DataSources(Document):
         """
         if len(DataSources.objects.all()) == 0:
             DataSources.create_data_sources()
-        if utils.is_total_documents_changed(DataSources.objects.all()[0].total_documents):
-            DataSources.update_data_sources()
         data_sources_object = DataSources.objects.all()[0]
         return data_sources_object.data_sources
