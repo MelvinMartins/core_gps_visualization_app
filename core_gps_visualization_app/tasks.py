@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 #@periodic_task(run_every=crontab(minute=0, hour=0))
 
 @shared_task
-def build_visualization_data():
+def build_visualization_data(legend):
     """
 
     Returns: list of charts with same x and y but different ids and data
@@ -32,8 +32,9 @@ def build_visualization_data():
         #    list_of_charts = api.get_plots_data(x_parameter, y_parameter, data_sources)
         #    return list_of_charts
 
-        all_data = utils.get_all_data()
-        list_of_charts = parse_data(all_data, x_parameter, y_parameter, data_sources)
+        data = utils.get_all_data()
+
+        list_of_charts = parse_data(data, x_parameter, y_parameter, data_sources, legend)
 
         # TODO: FIX Chart optimization
         # api.create_plots(list_of_charts, x_parameter, y_parameter, data_sources)

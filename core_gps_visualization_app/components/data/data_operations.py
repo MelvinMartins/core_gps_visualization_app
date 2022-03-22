@@ -2,14 +2,16 @@
 
 from core_gps_visualization_app import data_config as data_config
 from core_gps_visualization_app.utils import data_utils as utils
+from core_gps_visualization_app.data_config import info_id_legend
 
 
-def parse_data(all_data, x_parameter, y_parameter, data_sources):
+def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
     """ Parse data from the DB that match the configuration
     into a list of charts that are ready to be plotted (and overlaid)
 
     Args:
         data_sources: data sources selected on UI configurations
+        legend_ids: legend elements selected on UI configurations
         y_parameter: y selected on UI configurations
         x_parameter: x selected on UI configurations
         all_data: List of all XML documents (under JSON format)
@@ -33,29 +35,34 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
         for xml_file in all_data:
             dict_content = xml_file['dict_content']
             data_source = utils.get_value_by_path(dict_content, data_config.info_data_source['dataSourcePath'])
-            # Only check documents that come from a selected data source
-            if data_source in data_sources:
-                parameter_name = utils.get_value_by_path(dict_content, info_parameters['parameterNamePath'])
+            legend_id = utils.get_value_by_path(dict_content, data_config.info_id_legend['legendPath'])
+            legend_id_name = info_id_legend['legendName'] + ': ' + str(legend_id)
 
-                # 1 file = 1 group = 1 chart
-                if parameter_name == y_parameter:
-                    y_display_name = utils.get_display_name(y_parameter, list_parameters)
-                    y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                    data = utils.get_chart_data(dict_content, data_config.info_parameters)
-                    ids = utils.get_parameter_ids(dict_content, ids_parameters)
-                    part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
-                    if part is None:
-                        part = 0
+            # If legend path in this document, it has to contain a legend id from legend ids
+            if (not utils.is_legend_id_in_document(dict_content, data_config.info_id_legend['legendPath'])) or (legend_id_name in legend_ids):
+                # Only check documents that come from a selected data source
+                if data_source in data_sources:
+                    parameter_name = utils.get_value_by_path(dict_content, info_parameters['parameterNamePath'])
 
-                    chart_dict = {
-                        'x': (x_display_name, None),
-                        'y': (y_display_name, y_unit),
-                        'ids': ids,
-                        'data': data,
-                        'part': part
-                    }
+                    # 1 file = 1 group = 1 chart
+                    if parameter_name == y_parameter:
+                        y_display_name = utils.get_display_name(y_parameter, list_parameters)
+                        y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
+                        data = utils.get_chart_data(dict_content, data_config.info_parameters)
+                        ids = utils.get_parameter_ids(dict_content, ids_parameters)
+                        part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+                        if part is None:
+                            part = 0
 
-                    charts_to_overlay.append(chart_dict)
+                        chart_dict = {
+                            'x': (x_display_name, None),
+                            'y': (y_display_name, y_unit),
+                            'ids': ids,
+                            'data': data,
+                            'part': part
+                        }
+
+                        charts_to_overlay.append(chart_dict)
 
         # Sort charts to overlay by part
         sorted(charts_to_overlay, key=lambda i: i['part'])
@@ -99,47 +106,53 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources):
         for xml_file in all_data:
             dict_content = xml_file['dict_content']
             data_source = utils.get_value_by_path(dict_content, data_config.info_data_source['dataSourcePath'])
-            # Only check documents that come from a selected data source
-            if data_source in data_sources:
-                parameter_name = utils.get_value_by_path(dict_content, info_parameters['parameterNamePath'])
+            legend_id = utils.get_value_by_path(dict_content, data_config.info_id_legend['legendPath'])
+            legend_id_name = info_id_legend['legendName'] + ': ' + str(legend_id)
 
-                # 1 file for 1 group for 1 chart
-                if parameter_name == x_parameter:
-                    x_display_name = utils.get_display_name(x_parameter, list_parameters)
-                    x_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                    x_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
-                    x_ids = utils.get_parameter_ids(dict_content, ids_parameters)
-                    part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
-                    if part is None:
-                        part = 0
+            # If legend path in this document, it has to contain a legend id from legend ids
+            if (not utils.is_legend_id_in_document(dict_content, data_config.info_id_legend['legendPath'])) or (legend_id_name in legend_ids):
 
-                    x_dict = {
-                        'x': (x_display_name, x_unit),
-                        'ids': x_ids,
-                        'data': x_data,  # [{var1: x1}, {var2: x2}, etc]
-                        'part': part
-                    }
+                # Only check documents that come from a selected data source
+                if data_source in data_sources:
+                    parameter_name = utils.get_value_by_path(dict_content, info_parameters['parameterNamePath'])
 
-                    all_x_dicts.append(x_dict)
+                    # 1 file for 1 group for 1 chart
+                    if parameter_name == x_parameter:
+                        x_display_name = utils.get_display_name(x_parameter, list_parameters)
+                        x_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
+                        x_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
+                        x_ids = utils.get_parameter_ids(dict_content, ids_parameters)
+                        part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+                        if part is None:
+                            part = 0
 
-                # 1 file for 1 group for 1 chart
-                if parameter_name == y_parameter:
-                    y_display_name = utils.get_display_name(y_parameter, list_parameters)
-                    y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                    y_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
-                    y_ids = utils.get_parameter_ids(dict_content, ids_parameters)
-                    part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
-                    if part is None:
-                        part = 0
+                        x_dict = {
+                            'x': (x_display_name, x_unit),
+                            'ids': x_ids,
+                            'data': x_data,  # [{var1: x1}, {var2: x2}, etc]
+                            'part': part
+                        }
 
-                    y_dict = {
-                        'y': (y_display_name, y_unit),
-                        'ids': y_ids,
-                        'data': y_data,
-                        'part': part
-                    }
+                        all_x_dicts.append(x_dict)
 
-                    all_y_dicts.append(y_dict)
+                    # 1 file for 1 group for 1 chart
+                    if parameter_name == y_parameter:
+                        y_display_name = utils.get_display_name(y_parameter, list_parameters)
+                        y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
+                        y_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
+                        y_ids = utils.get_parameter_ids(dict_content, ids_parameters)
+                        part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+                        if part is None:
+                            part = 0
+
+                        y_dict = {
+                            'y': (y_display_name, y_unit),
+                            'ids': y_ids,
+                            'data': y_data,
+                            'part': part
+                        }
+
+                        all_y_dicts.append(y_dict)
 
         # Merge x and y
         for x_dict in all_x_dicts:

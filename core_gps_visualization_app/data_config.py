@@ -87,6 +87,10 @@ list_parameters = [
 # Several MongoDB docs might share the same data source
 info_data_source = {'dataSourcePath': 'data.parameterIds.dataOriginID'}
 
+# Path where the id used to legend charts is used
+# Allow user to control which parameters to overlay in the charts
+info_id_legend = {'legendName': 'Satellite', 'legendPath': 'data.parameterIds.satelliteID'}
+
 # 'idName' will appear on the plot to define a group
 ids_parameters = [
     {

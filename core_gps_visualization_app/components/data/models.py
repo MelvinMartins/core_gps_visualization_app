@@ -20,16 +20,11 @@ class DataSources(Document):
         Returns: data source is a list of tuples
 
         """
-        data_sources = []
         data_source_path = data_config.info_data_source['dataSourcePath']
+        data_sources = utils.query_data(data_source_path)
 
         all_data = utils.get_all_data()
         total_documents = len(all_data)
-        for xml_file in all_data:
-            dict_content = xml_file['dict_content']
-            data_source = utils.get_value_by_path(dict_content, data_source_path)
-            if data_source not in data_sources:
-                data_sources.append(data_source)
 
         return DataSources.objects.create(data_sources=data_sources, total_documents=total_documents)
 

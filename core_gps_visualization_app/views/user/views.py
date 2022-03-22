@@ -6,6 +6,11 @@ from core_gps_visualization_app.utils import data_utils as utils
 from core_gps_visualization_app.components.plots import api
 from core_gps_visualization_app.components.data import api as data_api
 
+from core_main_app.components.data.models import Data
+from core_main_app.system import api as sysapi
+from core_main_app.settings import DATA_SORTING_FIELDS
+import json
+
 
 def index(request):
     """ GPS Visualization homepage

@@ -3,6 +3,7 @@
 from datetime import datetime
 from core_gps_visualization_app import data_config
 from core_main_app.system import api as system_api
+import time
 
 
 def get_all_data():
@@ -18,6 +19,30 @@ def get_all_data():
 
     return all_data
 
+  
+def query_data(path):
+    """ Query a specific path, and put the results in a list
+
+    Args:
+        path:
+
+    Returns:
+
+    """
+    #field = 'dict_content.data.parameterIds.satelliteID'
+    field = 'dict_content.' + path
+    query = {field: {'$exists': True}}
+    results = []
+
+    test = system_api.execute_query_with_projection(query, field)
+    for data_object in test:
+        result = get_value_by_path(data_object.dict_content, path)
+        if result not in results:
+            results.append(result)
+
+    return results
+
+  
 def is_total_documents_changed(data_sources_documents):
     """ Compare the number of documents currently in the DB to the number of documents used by out Data source object
 
@@ -31,6 +56,7 @@ def is_total_documents_changed(data_sources_documents):
     current_documents = len(all_data)
     return current_documents != data_sources_documents
 
+  
 ###TODO
 def update_data_part(all_data, x_or_y_dict, part):
     # for data that are split in different files,
@@ -39,6 +65,7 @@ def update_data_part(all_data, x_or_y_dict, part):
     # and partX = {x_dict, part: X}
     return 0
 
+  
 ###TODO
 def combine_parts(all_data):
     # temp structure in function above must be transformed to be like
@@ -136,13 +163,14 @@ def parse_date(date_string):
         mins = date_string[14:16]
         secs = date_string[17:19]
         parsed_date = datetime(int(year), int(month), int(day), int(hours), int(mins), int(secs))
+        unix_time = time.mktime(parsed_date.timetuple())
 
     except ValueError:
-        parsed_date = False
+        unix_time = False
     except TypeError:
-        parsed_date = False
+        unix_time = False
 
-    return parsed_date
+    return unix_time
 
 
 def parse_number(value):
@@ -195,6 +223,22 @@ def get_parameter_ids(dict_content, ids_parameters):
         if id_value:
             ids.append({id_name: id_value})
     return ids
+
+
+def is_legend_id_in_document(dict_content, id_legend_path):
+    """
+
+    Args:
+        dict_content:
+        id_legend_path:
+
+    Returns:
+
+    """
+    id_legend_value = get_value_by_path(dict_content, id_legend_path)
+    if id_legend_value is None:
+        return False
+    return True
 
 
 def get_parameter_data(dict_content, list_parameters, parameter_name):
