@@ -19,7 +19,7 @@ def get_all_data():
 
     return all_data
 
-
+  
 def query_data(path):
     """ Query a specific path, and put the results in a list
 
@@ -42,7 +42,7 @@ def query_data(path):
 
     return results
 
-
+  
 def is_total_documents_changed(data_sources_documents):
     """ Compare the number of documents currently in the DB to the number of documents used by out Data source object
 
@@ -56,7 +56,7 @@ def is_total_documents_changed(data_sources_documents):
     current_documents = len(all_data)
     return current_documents != data_sources_documents
 
-
+  
 ###TODO
 def update_data_part(all_data, x_or_y_dict, part):
     # for data that are split in different files,
@@ -65,6 +65,7 @@ def update_data_part(all_data, x_or_y_dict, part):
     # and partX = {x_dict, part: X}
     return 0
 
+  
 ###TODO
 def combine_parts(all_data):
     # temp structure in function above must be transformed to be like

@@ -50,7 +50,3 @@ class DataSources(Document):
             DataSources.update_data_sources()
         data_sources_object = DataSources.objects.all()[0]
         return data_sources_object.data_sources
-
-
-
-
