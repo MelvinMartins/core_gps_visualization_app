@@ -5,6 +5,7 @@ from core_gps_visualization_app.utils import parser as utils
 from datashader.colors import Sets1to3
 import holoviews.operation.datashader as hd
 import datashader as ds
+import numpy as np
 
 count = 1
 
@@ -84,8 +85,10 @@ def plot_scatter(plots_data):
         y_unit_label = unit_stringify(plot['y'][1])
 
         # Create plot
-        scatter_plot = hv.Scatter(plot['data'], stringify(plot['x'][0]) + x_unit_label,
+        scatter_plot = hv.Scatter(np.array(plot['data']), stringify(plot['x'][0]) + x_unit_label,
                                   stringify(plot['y'][0]) + y_unit_label, label=label)
+
+        #scatter_plot = hv.Points(np.array(plot['data']))
 
         # Add to list of plots
         plots[str(count)] = scatter_plot
@@ -99,16 +102,20 @@ def plot_scatter(plots_data):
 
     # Datashader removes groups so we add artificial ones (cf. holoviews documentation)
     # len(Sets1to3) is 22, might be too small in some occurrences, now support up to 34 groups
+    print('groups')
+    print(groups)
+    print('colors list')
+    print(colors_list)
     color_key = [(group, color) for group, color in zip(groups, colors_list)]  # Attribute a group to a color
     color_points = hv.NdOverlay({k: hv.Points([0, 0], label=str(k)).opts(color=v, size=0) for k, v in color_key})
 
-    print(groups)
+    #return overlaid_chart.opts(hv.opts.RGB(
+    #    height=500,
+    #    width=750,
+   #     show_grid=True,
+     #   title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))  # * color_points)
 
-    return overlaid_chart.opts(hv.opts.RGB(
-        height=500,
-        width=750,
-        show_grid=True,
-        title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))  # * color_points)
+    return (overlaid_chart * color_points).opts(hv.opts.RGB(height=500, width=750, show_grid=True, title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))
 
 
 def plot_line(plots_data):
@@ -144,7 +151,7 @@ def plot_line(plots_data):
         y_unit_label = unit_stringify(plot['y'][1])
 
         # Create plots
-        line_plot = hv.Curve(plot['data'], stringify(plot['x'][0]) + x_unit_label,
+        line_plot = hv.Curve(np.array(plot['data']), stringify(plot['x'][0]) + x_unit_label,
                              stringify(plot['y'][0]) + y_unit_label, label=label)
 
         # Add to list of plots
@@ -160,8 +167,8 @@ def plot_line(plots_data):
     color_key = [(group, color) for group, color in zip(groups, colors_list)]  # Attribute a group to a color
     color_points = hv.NdOverlay({k: hv.Points([0, 0], label=str(k)).opts(color=v, size=0) for k, v in color_key})
 
-    return overlaid_chart.opts(hv.opts.RGB(height=500, width=750, show_grid=True,
-                                           title="Line: " + str(y_tuple[0]) + " against " + str(x_tuple[0])))  # * color_points)
+    return (overlaid_chart.opts(hv.opts.RGB(height=500, width=750, show_grid=True,
+                                           title="Line: " + str(y_tuple[0]) + " against " + str(x_tuple[0]))) * color_points)
 
 
 def plot_box(plots_data):

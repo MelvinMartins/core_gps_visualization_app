@@ -6,6 +6,7 @@ import sys
 
 import core_gps_visualization_app.data_config as config
 from datetime import datetime
+import time
 import statistics
 
 
@@ -26,13 +27,14 @@ def parse_date(date_string):
         mins = date_string[14:16]
         secs = date_string[17:19]
         parsed_date = datetime(int(year), int(month), int(day), int(hours), int(mins), int(secs))
+        unix_time = time.mktime(parsed_date.timetuple())
 
     except ValueError:
-        parsed_date = False
+        unix_time = False
     except TypeError:
-        parsed_date = False
+        unix_time = False
 
-    return parsed_date
+    return unix_time
 
 
 def parse_value_by_path(dict_content, path, ids_list_of_dicts=None):
@@ -357,6 +359,7 @@ def unit_stringify(unit_label):
     return label
 
 
+#TODO: Update this method so time selection works with the new update from datetime to unix time
 def parse_time_range_data(list_of_tuples_data, time_range):
     """
     Args:
@@ -374,15 +377,15 @@ def parse_time_range_data(list_of_tuples_data, time_range):
     for tuple_data in list_of_tuples_data[1:]:
         time_range_reached = False
 
-        if time_range == "Seconds":
-            if tuple_data[0].second != sub_x_data[0].second:
-                time_range_reached = True
+        # Keep on of every 60 data points
         if time_range == "Minutes":
             if tuple_data[0].minute != sub_x_data[0].minute:
                 time_range_reached = True
+        # Keep on of every 3600 data points
         if time_range == "Hours":
             if tuple_data[0].hour != sub_x_data[0].hour:
                 time_range_reached = True
+        # Keep on of every 86400 data points
         if time_range == "Days":
             if tuple_data[0].day != sub_x_data[0].day:
                 time_range_reached = True
@@ -403,8 +406,6 @@ def parse_time_range_data(list_of_tuples_data, time_range):
 
     for i in range(0, len(x_data)):
         time = x_data[i][0]
-        if time_range == "Seconds":
-            x = datetime(time.year, time.month, time.day, time.hour, time.minute, time.second)
         if time_range == "Minutes":
             x = datetime(time.year, time.month, time.day, time.hour, time.minute)
         if time_range == "Hours":
