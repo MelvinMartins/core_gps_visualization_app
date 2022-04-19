@@ -4,6 +4,7 @@ from datetime import datetime
 from core_gps_visualization_app import data_config
 from core_main_app.system import api as system_api
 import time
+import julian
 
 
 def get_all_data():
@@ -163,14 +164,14 @@ def parse_date(date_string):
         mins = date_string[14:16]
         secs = date_string[17:19]
         parsed_date = datetime(int(year), int(month), int(day), int(hours), int(mins), int(secs))
-        unix_time = time.mktime(parsed_date.timetuple())
+        mjd_time = julian.to_jd(parsed_date) - 2400000.5 
 
     except ValueError:
-        unix_time = False
+        mjd_time = False
     except TypeError:
-        unix_time = False
+        mjd_time = False
 
-    return unix_time
+    return mjd_time
 
 
 def parse_number(value):

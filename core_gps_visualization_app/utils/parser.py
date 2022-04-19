@@ -6,7 +6,7 @@ import sys
 
 import core_gps_visualization_app.data_config as config
 from datetime import datetime
-import time
+import julian
 import statistics
 
 
@@ -27,14 +27,14 @@ def parse_date(date_string):
         mins = date_string[14:16]
         secs = date_string[17:19]
         parsed_date = datetime(int(year), int(month), int(day), int(hours), int(mins), int(secs))
-        unix_time = time.mktime(parsed_date.timetuple())
+        mjd_time = julian.to_jd(parse_date) - 2400000.5
 
     except ValueError:
-        unix_time = False
+        mjd_time = False
     except TypeError:
-        unix_time = False
+        mjd_time = False
 
-    return unix_time
+    return mjd_time
 
 
 def parse_value_by_path(dict_content, path, ids_list_of_dicts=None):

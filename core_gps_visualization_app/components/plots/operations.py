@@ -10,12 +10,13 @@ import numpy as np
 count = 1
 
 
-def plot_layout(plots_type, plots_data):
+def plot_layout(plots_type, plots_data, vlines):
     """
 
     Args:
         plots_type:
         plots_data:
+        vlines:
 
     Returns:
 
@@ -23,9 +24,9 @@ def plot_layout(plots_type, plots_data):
     hv.extension('bokeh')
 
     if plots_type == 'Scatter':
-        layout = plot_scatter(plots_data)
+        layout = plot_scatter(plots_data, vlines)
     if plots_type == 'Line':
-        layout = plot_line(plots_data)
+        layout = plot_line(plots_data, vlines)
 
     try:
         return layout
@@ -44,17 +45,24 @@ def plot_layout_by_time_range(plots_data, plots_type, time_range):
     Returns:
 
     """
+    vlines = []
     for dict_data in plots_data:
-        if dict_data['x'][0] == "Time (UTC)" and time_range != "Seconds":
-            dict_data['data'] = utils.parse_time_range_data(dict_data['data'], time_range)
-    return plot_layout(plots_type, plots_data)
+        if dict_data['x'][0] == "Time (UTC)":
+            min = int(dict_data['data'][0][0])
+            max = int(dict_data['data'][-1][0])
+            for i in range(min, max + 1):
+                vlines.append(i)
+            if time_range != "Seconds":
+                dict_data['data'] = utils.parse_time_range_data(dict_data['data'], time_range)
+    return plot_layout(plots_type, plots_data, vlines)
 
 
-def plot_scatter(plots_data):
+def plot_scatter(plots_data, vlines):
     """
 
     Args:
         plots_data:
+        vlines:
 
     Returns:
 
@@ -115,14 +123,23 @@ def plot_scatter(plots_data):
    #     show_grid=True,
      #   title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))  # * color_points)
 
-    return (overlaid_chart * color_points).opts(hv.opts.RGB(height=500, width=750, show_grid=True, title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))
+    legend_chart = (overlaid_chart * color_points).opts(hv.opts.RGB(height=500, width=750, show_grid=True, title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))
 
+    if len(vlines) > 0:
+        vline_chart = hv.VLine(vlines[0]).opts(color='black')
+        for vline in vlines:
+            vline_chart = vline_chart * hv.VLine(vline).opts(color='black')
 
-def plot_line(plots_data):
+        return legend_chart * vline_chart
+    else:
+        return legend_chart
+
+def plot_line(plots_data, vlines):
     """
 
     Args:
         plots_data:
+        vlines:
 
     Returns:
 
@@ -167,8 +184,16 @@ def plot_line(plots_data):
     color_key = [(group, color) for group, color in zip(groups, colors_list)]  # Attribute a group to a color
     color_points = hv.NdOverlay({k: hv.Points([0, 0], label=str(k)).opts(color=v, size=0) for k, v in color_key})
 
-    return (overlaid_chart.opts(hv.opts.RGB(height=500, width=750, show_grid=True,
+    legend_chart = (overlaid_chart.opts(hv.opts.RGB(height=500, width=750, show_grid=True,
                                            title="Line: " + str(y_tuple[0]) + " against " + str(x_tuple[0]))) * color_points)
+
+    if len(vlines) > 0:
+        vline_chart = hv.VLine(vlines[0]).opts(color='black')
+        for vline in vlines:
+            vline_chart = vline_chart * hv.VLine(vline).opts(color='black')
+        return legend_chart * vline_chart
+    else:
+        return legend_chart
 
 
 def plot_box(plots_data):
