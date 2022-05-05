@@ -96,8 +96,6 @@ def plot_scatter(plots_data, vlines):
         scatter_plot = hv.Scatter(np.array(plot['data']), stringify(plot['x'][0]) + x_unit_label,
                                   stringify(plot['y'][0]) + y_unit_label, label=label)
 
-        #scatter_plot = hv.Points(np.array(plot['data']))
-
         # Add to list of plots
         plots[str(count)] = scatter_plot
 
@@ -117,18 +115,12 @@ def plot_scatter(plots_data, vlines):
     color_key = [(group, color) for group, color in zip(groups, colors_list)]  # Attribute a group to a color
     color_points = hv.NdOverlay({k: hv.Points([0, 0], label=str(k)).opts(color=v, size=0) for k, v in color_key})
 
-    #return overlaid_chart.opts(hv.opts.RGB(
-    #    height=500,
-    #    width=750,
-   #     show_grid=True,
-     #   title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))  # * color_points)
-
     legend_chart = (overlaid_chart * color_points).opts(hv.opts.RGB(height=500, width=750, show_grid=True, title="Scatter: " + stringify(y_tuple[0]) + " against " + stringify(x_tuple[0])))
 
     if len(vlines) > 0:
-        vline_chart = hv.VLine(vlines[0]).opts(color='black')
+        vline_chart = hv.VLine(vlines[0]).opts(color='blue')
         for vline in vlines:
-            vline_chart = vline_chart * hv.VLine(vline).opts(color='black')
+            vline_chart = vline_chart * hv.VLine(vline).opts(color='blue')
 
         return legend_chart * vline_chart
     else:
@@ -188,9 +180,9 @@ def plot_line(plots_data, vlines):
                                            title="Line: " + str(y_tuple[0]) + " against " + str(x_tuple[0]))) * color_points)
 
     if len(vlines) > 0:
-        vline_chart = hv.VLine(vlines[0]).opts(color='black')
+        vline_chart = hv.VLine(vlines[0]).opts(color='blue')
         for vline in vlines:
-            vline_chart = vline_chart * hv.VLine(vline).opts(color='black')
+            vline_chart = vline_chart * hv.VLine(vline).opts(color='blue')
         return legend_chart * vline_chart
     else:
         return legend_chart
