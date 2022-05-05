@@ -26,6 +26,8 @@ def build_visualization_data(legend):
         x_parameter = api.get_x_parameter()
         y_parameter = api.get_y_parameter()
         data_sources = api.get_data_sources()
+        
+        logger.info("Periodic task: Retrieved plot parameters")
 
         # TODO: FIX Chart optimization
         # if api.plots_exist(x_parameter, y_parameter, data_sources):
@@ -33,6 +35,8 @@ def build_visualization_data(legend):
         #    return list_of_charts
 
         data = utils.get_all_data()
+        
+        logger.info("Periodic task: Retrieved plot data")
 
         list_of_charts = parse_data(data, x_parameter, y_parameter, data_sources, legend)
 
