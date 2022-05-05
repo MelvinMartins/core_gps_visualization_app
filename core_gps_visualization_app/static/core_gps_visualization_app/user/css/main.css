@@ -1,11 +1,9 @@
 #chart-configuration {
-    position: sticky;
     display: inline-block;
     vertical-align: top;
     width: 23%;
-    min-width: 200px;
+    min-width: 330px;
     min-height: 600px;
-    float: left;
     top: 0px;
     border-radius: 5px;
     border: 5px solid #925520;
@@ -14,13 +12,11 @@
 }
 
 #visualization {
-    position: sticky;
     display: inline-block;
     vertical-align: top;
     width: 70%;
-    min-width: 1000px;
+    min-width: 1130px;
     min-height: 600px;
-    float: right;
     top: 0px;
     border-radius: 5px;
     border: 5px solid #925520;
