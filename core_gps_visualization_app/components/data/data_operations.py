@@ -4,6 +4,10 @@ from core_gps_visualization_app import data_config as data_config
 from core_gps_visualization_app.utils import data_utils as utils
 from core_gps_visualization_app.data_config import info_id_legend
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
     """ Parse data from the DB that match the configuration
@@ -20,6 +24,8 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
 
     """
     # Instantiate list to return
+    logger.info("Periodic task: START parsing data")
+
     list_of_charts = []
 
     # data config instantiate
@@ -176,6 +182,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
                     }
 
                     list_of_charts.append(chart_dict)
-
+                    
+    logger.info("Periodic task: FINISH parsing data")
     return list_of_charts
 
