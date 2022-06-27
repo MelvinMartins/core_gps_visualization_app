@@ -28,7 +28,7 @@ info_parameters = {
 
 # One variable per instance is supported
 # Schema doesn't need to define the variable name
-variable = 'Time (UTC)'
+variable = 'Time (MJD)'
 
 
 # 'list_parameters' defines the 'parameterName' that will match with what can be found at the 'parameterNamePath'

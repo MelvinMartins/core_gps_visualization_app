@@ -47,7 +47,7 @@ def plot_layout_by_time_range(plots_data, plots_type, time_range):
     """
     vlines = []
     for dict_data in plots_data:
-        if dict_data['x'][0] == "Time (UTC)":
+        if dict_data['x'][0] == "Time (MJD)":
             min = int(dict_data['data'][0][0])
             max = int(dict_data['data'][-1][0])
             for i in range(min, max + 1):

@@ -3,7 +3,6 @@
 from datetime import datetime
 from core_gps_visualization_app import data_config
 from core_main_app.system import api as system_api
-import time
 import julian
 
 

@@ -5,36 +5,8 @@ import re
 import sys
 
 import core_gps_visualization_app.data_config as config
+import core_gps_visualization_app.utils.data_utils as data_utils
 from datetime import datetime
-import julian
-import statistics
-
-
-def parse_date(date_string):
-    """
-
-    Args:
-        date_string: YYYY-mm-ddTHH:MM:SS
-
-    Returns: datetime
-
-    """
-    try:
-        year = date_string[:4]
-        month = date_string[5:7]
-        day = date_string[8:10]
-        hours = date_string[11:13]
-        mins = date_string[14:16]
-        secs = date_string[17:19]
-        parsed_date = datetime(int(year), int(month), int(day), int(hours), int(mins), int(secs))
-        mjd_time = julian.to_jd(parse_date) - 2400000.5
-
-    except ValueError:
-        mjd_time = False
-    except TypeError:
-        mjd_time = False
-
-    return mjd_time
 
 
 def parse_value_by_path(dict_content, path, ids_list_of_dicts=None):
@@ -68,9 +40,9 @@ def parse_value_by_path(dict_content, path, ids_list_of_dicts=None):
     if is_number(value):
         value = float(value)
     else:
-        is_date = parse_date(value)
+        is_date = data_utils.parse_date(value)
         if is_date:
-            value = parse_date(value)
+            value = data_utils.parse_date(value)
 
     return value
 
@@ -359,62 +331,24 @@ def unit_stringify(unit_label):
     return label
 
 
-#TODO: Update this method so time selection works with the new update from datetime to unix time
 def parse_time_range_data(list_of_tuples_data, time_range):
     """
     Args:
         list_of_tuples_data:
-        time_range:
+        time_range: string
 
     Returns:
 
     """
-    x_data = []
-    y_data = []
-    sub_x_data = [list_of_tuples_data[0][0]]
-    sub_y_data = [list_of_tuples_data[0][1]]
-
-    for tuple_data in list_of_tuples_data[1:]:
-        time_range_reached = False
-
-        # Keep on of every 60 data points
-        if time_range == "Minutes":
-            if tuple_data[0].minute != sub_x_data[0].minute:
-                time_range_reached = True
-        # Keep on of every 3600 data points
-        if time_range == "Hours":
-            if tuple_data[0].hour != sub_x_data[0].hour:
-                time_range_reached = True
-        # Keep on of every 86400 data points
-        if time_range == "Days":
-            if tuple_data[0].day != sub_x_data[0].day:
-                time_range_reached = True
-
-        if time_range_reached:
-            x_data.append(sub_x_data)
-            y_data.append(sub_y_data)
-            sub_x_data = [tuple_data[0]]
-            sub_y_data = [tuple_data[1]]
-        else:
-            sub_x_data.append(tuple_data[0])
-            sub_y_data.append(tuple_data[1])
-            if list_of_tuples_data.index(tuple_data) == len(list_of_tuples_data) - 1:
-                x_data.append(sub_x_data)
-                y_data.append(sub_y_data)
-
     updated_data = []
 
-    for i in range(0, len(x_data)):
-        time = x_data[i][0]
-        if time_range == "Minutes":
-            x = datetime(time.year, time.month, time.day, time.hour, time.minute)
-        if time_range == "Hours":
-            x = datetime(time.year, time.month, time.day, time.hour)
-        if time_range == "Days":
-            x = datetime(time.year, time.month, time.day)
-
-        y = statistics.median(y_data[i])
-        updated_data.append((x, y))
+    for i in range(len(list_of_tuples_data)):
+        if i % 60 == 0 and time_range == "Minutes":
+            updated_data.append(list_of_tuples_data[i])
+        if i % 3600 == 0 and time_range == "Hours":
+            updated_data.append(list_of_tuples_data[i])
+        if i % 86400 == 0 and time_range == "Days":
+            updated_data.append(list_of_tuples_data[i])
 
     return updated_data
 
