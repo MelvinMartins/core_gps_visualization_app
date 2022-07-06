@@ -1,7 +1,6 @@
 import holoviews as hv
 from core_main_app.commons import exceptions
 from core_gps_visualization_app.utils.parser import stringify, unit_stringify
-from core_gps_visualization_app.utils import parser as utils
 from datashader.colors import Sets1to3
 import holoviews.operation.datashader as hd
 import datashader as ds
@@ -10,17 +9,24 @@ import numpy as np
 count = 1
 
 
-def plot_layout(plots_type, plots_data, vlines):
+def plot_layout(plots_data, plots_type):
     """
 
     Args:
-        plots_type:
         plots_data:
-        vlines:
+        plots_type:
 
     Returns:
 
     """
+    vlines = []
+    for dict_data in plots_data:
+        if dict_data['x'][0] == "Time (MJD)" and len(dict_data['data']) > 0:
+            min = int(dict_data['data'][0][0])
+            max = int(dict_data['data'][-1][0])
+            for i in range(min, max + 1):
+                vlines.append(i)
+
     hv.extension('bokeh')
 
     if plots_type == 'Scatter':
@@ -32,29 +38,6 @@ def plot_layout(plots_type, plots_data, vlines):
         return layout
     except Exception:
         raise exceptions.DoesNotExist("No plots type found!")
-
-
-def plot_layout_by_time_range(plots_data, plots_type, time_range):
-    """
-
-    Args:
-        plots_data:
-        plots_type:
-        time_range:
-
-    Returns:
-
-    """
-    vlines = []
-    for dict_data in plots_data:
-        if dict_data['x'][0] == "Time (MJD)":
-            min = int(dict_data['data'][0][0])
-            max = int(dict_data['data'][-1][0])
-            for i in range(min, max + 1):
-                vlines.append(i)
-            if time_range != "Seconds":
-                dict_data['data'] = utils.parse_time_range_data(dict_data['data'], time_range)
-    return plot_layout(plots_type, plots_data, vlines)
 
 
 def plot_scatter(plots_data, vlines):
@@ -125,6 +108,7 @@ def plot_scatter(plots_data, vlines):
         return legend_chart * vline_chart
     else:
         return legend_chart
+
 
 def plot_line(plots_data, vlines):
     """

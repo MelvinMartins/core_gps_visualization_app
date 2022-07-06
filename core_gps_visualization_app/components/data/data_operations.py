@@ -9,16 +9,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
+def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, time_range):
     """ Parse data from the DB that match the configuration
     into a list of charts that are ready to be plotted (and overlaid)
 
     Args:
         data_sources: data sources selected on UI configurations
         legend_ids: legend elements selected on UI configurations
-        y_parameter: y selected on UI configurations
-        x_parameter: x selected on UI configurations
+        y_parameter: parameter name y selected on UI configurations
+        x_parameter: parameter name x selected on UI configurations
         all_data: List of all XML documents (under JSON format)
+        time_range: time range selected on UI configurations
 
     Returns: List of dicts that each represent one plot (check tests for more details)
 
@@ -54,21 +55,29 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
                     if parameter_name == y_parameter:
                         y_display_name = utils.get_display_name(y_parameter, list_parameters)
                         y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                        data = utils.get_chart_data(dict_content, data_config.info_parameters)
+                        data = utils.get_chart_data(dict_content, data_config.info_parameters, time_range)
                         ids = utils.get_parameter_ids(dict_content, ids_parameters)
                         part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
+
+                        found_ids = False
                         if part is None:
                             part = 0
+                            for elt in charts_to_overlay:
+                                if elt['ids'] == ids:
+                                    found_ids = True
+                                    elt['data'] += data
+                            data = sorted(data)
 
-                        chart_dict = {
-                            'x': (x_display_name, None),
-                            'y': (y_display_name, y_unit),
-                            'ids': ids,
-                            'data': data,
-                            'part': part
-                        }
+                        if not found_ids:
+                            chart_dict = {
+                                'x': (x_display_name, None),
+                                'y': (y_display_name, y_unit),
+                                'ids': ids,
+                                'data': data,
+                                'part': part
+                            }
 
-                        charts_to_overlay.append(chart_dict)
+                            charts_to_overlay.append(chart_dict)
 
         # Sort charts to overlay by part
         sorted(charts_to_overlay, key=lambda i: i['part'])
@@ -126,7 +135,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
                     if parameter_name == x_parameter:
                         x_display_name = utils.get_display_name(x_parameter, list_parameters)
                         x_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                        x_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
+                        x_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters, time_range))
                         x_ids = utils.get_parameter_ids(dict_content, ids_parameters)
                         part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
                         if part is None:
@@ -145,7 +154,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids):
                     if parameter_name == y_parameter:
                         y_display_name = utils.get_display_name(y_parameter, list_parameters)
                         y_unit = utils.get_value_by_path(dict_content, info_parameters['parameterUnitPath'])
-                        y_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters))
+                        y_data = dict(utils.get_chart_data(dict_content, data_config.info_parameters, time_range))
                         y_ids = utils.get_parameter_ids(dict_content, ids_parameters)
                         part = utils.get_value_by_path(dict_content, info_parameters['parameterPartPath'])
                         if part is None:

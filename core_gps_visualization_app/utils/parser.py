@@ -331,28 +331,6 @@ def unit_stringify(unit_label):
     return label
 
 
-def parse_time_range_data(list_of_tuples_data, time_range):
-    """
-    Args:
-        list_of_tuples_data:
-        time_range: string
-
-    Returns:
-
-    """
-    updated_data = []
-
-    for i in range(len(list_of_tuples_data)):
-        if i % 60 == 0 and time_range == "Minutes":
-            updated_data.append(list_of_tuples_data[i])
-        if i % 3600 == 0 and time_range == "Hours":
-            updated_data.append(list_of_tuples_data[i])
-        if i % 86400 == 0 and time_range == "Days":
-            updated_data.append(list_of_tuples_data[i])
-
-    return updated_data
-
-
 def get_size(list_charts):
     """ We can't get the size in bytes for a list of dicts, nor tuples. In some examples, we measured a size of
     about 3 millions with this method is about the max size of a document in MongoDB (16MB)

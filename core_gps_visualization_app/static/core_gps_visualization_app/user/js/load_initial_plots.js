@@ -12,14 +12,14 @@ var hideVisuLoadingSpinner = function() {
 
 var loadInitialPlots = function(event){
    //document.getElementById('visualization').innerHTML = "";
-   $("#visualization").html("<img src='../../../static/core_gps_visualization_app/user/img/loading.gif' alt='loading bar'/>");
-   showVisuLoadingSpinner();
+   //$("#visualization").html("<img src='../../../static/core_gps_visualization_app/user/img/loading.gif' alt='loading bar'/>");
+   //showVisuLoadingSpinner();
    $.ajax({
     url:"load-initial-plots",
     success: function(data) {
         console.log("Success");
         $("#visualization").html(data.script);
-        hideVisuLoadingSpinner();
+        //hideVisuLoadingSpinner();
      },
     error:function(){
            console.log("Error");

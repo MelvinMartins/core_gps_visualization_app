@@ -65,12 +65,25 @@ def update_data_part(all_data, x_or_y_dict, part):
     # and partX = {x_dict, part: X}
     return 0
 
-  
-###TODO
-def combine_parts(all_data):
-    # temp structure in function above must be transformed to be like
-    # any other x/y dict
-    return 0
+
+# # check why two part = 0 in the data operation and change that instead
+# def combine_parts(plots_data_list):
+#     # temp structure in function above must be transformed to be like
+#     # any other x/y dict
+#     all_plots = []
+#     data = []
+#     ids = []
+#     for chart_dict in sorted(plots_data_list, key=lambda l: l['ids']):
+#         if chart_dict['ids'] in ids:
+#             data.append(chart_dict['data'])
+#         else:
+#             if len(all_plots) == 0 and len(data) != 0:
+#                 chart_dict['data'] = data
+#                 all_plots.append(chart_dict)
+#             data = chart_dict['data']
+#             ids.append(chart_dict['ids'])
+#
+#     return plots_data_list
 
 
 def build_groups(x_ids, y_ids):
@@ -128,18 +141,27 @@ def build_chart(x_dict, y_dict):
     return chart_dict
 
 
-def parse_data(data):
+def parse_data(data, time_range):
+    if time_range == "Minutes":
+        step = 60
+    elif time_range == "Hours":
+        step = 3600
+    elif time_range == "Days":
+        step = 86400
+    else:
+        step = 1
+
     parsed = []
     # In Case we only have 1 data point
     if not isinstance(data, list):
         data = [data]
-    for elt in data:
-        parsed_elt = parse_number(elt)
+    for i in range(0, len(data)-1, step):
+        parsed_elt = parse_number(data[i])
         if not parsed_elt:
-            parsed_elt = parse_date(elt)
+            parsed_elt = parse_date(data[i])
             if not parsed_elt:
                 parsed_elt = None
-        if elt == 0:
+        if data[i] == 0:
             parsed_elt = None
         parsed.append(parsed_elt)
 
@@ -264,12 +286,26 @@ def get_display_name(name, list_parameters):
     return None
 
 
-def get_chart_data(dict_content, info_parameters):
+def get_parameter_name(name):
+    if name != data_config.variable:
+        found = False
+        list_parameters = data_config.list_parameters
+        i = 0
+        while not found and i < len(list_parameters):
+            if list_parameters[i]['displayName'] == name:
+                return list_parameters[i]['parameterName']
+            i += 1
+        return None
+    else:
+        return name
+
+
+def get_chart_data(dict_content, info_parameters, time_range):
     variable_path = info_parameters['variablePath']
     value_path = info_parameters['valuePath']
 
-    values = parse_data(get_value_by_path(dict_content, value_path))
-    variables = parse_data(get_value_by_path(dict_content, variable_path))
+    values = parse_data(get_value_by_path(dict_content, value_path), time_range)
+    variables = parse_data(get_value_by_path(dict_content, variable_path), time_range)
 
     data = list(zip(variables, values))
 
