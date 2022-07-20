@@ -73,15 +73,15 @@ list_parameters = [
     {
         'parameterName': 'residual',
         'displayName': 'Residual',
-    },
-    {
-        'parameterName': 'counter',
-        'displayName': 'Counter',
-    },
-    {
-        'parameterName': 'timeoffset',
-        'displayName': 'Time Offset',
     }]
+    # {
+    #     'parameterName': 'counter',
+    #     'displayName': 'Counter',
+    # },
+    # {
+    #     'parameterName': 'timeoffset',
+    #     'displayName': 'Time Offset',
+    # }]
 
 # Path where the data source is indicated
 # Several MongoDB docs might share the same data source

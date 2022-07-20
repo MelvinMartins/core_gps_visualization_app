@@ -4,7 +4,8 @@ import time
 from celery import shared_task
 from core_gps_visualization_app.utils import data_utils as utils
 
-from core_gps_visualization_app.components.data.data_operations import parse_data
+#from core_gps_visualization_app.components.data.data_operations import parse_data
+from core_gps_visualization_app.components.data.simplified_operations import parse_data
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ def build_visualization_data(legend, x_parameter, y_parameter, data_sources, tim
         x_parameter = utils.get_parameter_name(x_parameter)
         y_parameter = utils.get_parameter_name(y_parameter)
 
-        list_of_charts = parse_data(data, x_parameter, y_parameter, data_sources, legend, time_range)
+        list_of_charts, offset = parse_data(data, x_parameter, y_parameter, data_sources, legend, time_range)
 
         # TODO: FIX Chart optimization
         # api.create_plots(list_of_charts, x_parameter, y_parameter, data_sources)
@@ -46,7 +47,7 @@ def build_visualization_data(legend, x_parameter, y_parameter, data_sources, tim
         logger.info("Periodic task: FINISH creating plots objects " +
                     "(" + str((time.time() - start_time) / 60) + "minutes)")
 
-        return list_of_charts
+        return (list_of_charts, offset)
 
     except Exception as e:
         logger.error("An error occurred while creating plots objects: " + str(e))

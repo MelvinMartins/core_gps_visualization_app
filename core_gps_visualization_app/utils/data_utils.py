@@ -316,6 +316,43 @@ def get_chart_data(dict_content, info_parameters, time_range):
     return data
 
 
+def merge_ids(ids_list, charts_list):
+    if len(set(ids_list)) == len(ids_list):
+        parsed_charts = charts_list
+    else:
+        parsed_charts = []
+        for chart_ids in ids_list:
+            same_ids_charts = list(filter(lambda l: l['ids'] == chart_ids, charts_list))
+            data = []
+            x = next(same_ids_charts['x'])
+            y = next(same_ids_charts['y'])
+            for chart in same_ids_charts:
+                data += chart['data']
+
+            parsed_charts.append(
+                {
+                    'x': x,
+                    'y': y,
+                    'ids': chart_ids,
+                    'data': sorted(data)
+                }
+            )
+    return parsed_charts
+
+
+def parse_time_data(parameter_values, time_range):
+    values = parse_data(parameter_values['value'], time_range)
+    times = parse_data(parameter_values['time'], time_range)
+
+    data = list(zip(times, values))
+
+    for data_tuple in data:
+        if None in data_tuple:
+            data.remove(data_tuple)
+
+    return data
+
+
 def get_variable():
     variable = data_config.variable
     variable_tuple = (variable, variable)

@@ -1,6 +1,8 @@
 import holoviews as hv
 from core_main_app.commons import exceptions
 from core_gps_visualization_app.utils.parser import stringify, unit_stringify
+from bokeh.layouts import column
+from bokeh.plotting import figure
 from datashader.colors import Sets1to3
 import holoviews.operation.datashader as hd
 import datashader as ds
@@ -20,7 +22,7 @@ def plot_layout(plots_data, plots_type):
 
     """
     vlines = []
-    for dict_data in plots_data:
+    for dict_data in plots_data[0]:
         if dict_data['x'][0] == "Time (MJD)" and len(dict_data['data']) > 0:
             min = int(dict_data['data'][0][0])
             max = int(dict_data['data'][-1][0])
@@ -54,19 +56,17 @@ def plot_scatter(plots_data, vlines):
     groups = []
 
     # All plots share same x and y so we can take the first one
-    y_tuple = plots_data[0]['y']
-    x_tuple = plots_data[0]['x']
+    y_tuple = next(plots_data[0])['y']
+    x_tuple = next(plots_data[0])['x']
 
     count = 0
-    for plot in plots_data:
+    for plot in plots_data[0]:
         count += 1
         # Define chart label
         label = ''
         if plot['ids'] is not None:
-            for id_dict in plot['ids']:
-                label += stringify(next(iter(id_dict.keys()))) + ': ' + stringify(next(iter(id_dict.values())))
-                label += ' - '
-            label = label[:-3]
+            if plot['ids'] is not None:
+                label += stringify(next(iter(plot['ids'].keys()))) + ': ' + stringify(next(iter(plot['ids'].values())))
 
         # List of labels to Identify groups
         groups.append(label)
@@ -105,7 +105,11 @@ def plot_scatter(plots_data, vlines):
         for vline in vlines:
             vline_chart = vline_chart * hv.VLine(vline).opts(color='blue')
 
-        return legend_chart * vline_chart
+        offset = hv.Scatter(data=plots_data[1])
+        offset = hd.spread(hd.datashade(offset).opts(hv.opts.RGB(height=200, width=750, show_grid=True, title='Time offset')), px=3)
+
+        return hv.Layout((legend_chart * vline_chart) + offset).cols(1)
+
     else:
         return legend_chart
 
@@ -124,17 +128,14 @@ def plot_line(plots_data, vlines):
     groups = []
 
     # All plots share same x and y so we can take the first one
-    y_tuple = plots_data[0]['y']
-    x_tuple = plots_data[0]['x']
+    y_tuple = next(plots_data[0])['y']
+    x_tuple = next(plots_data[0])['x']
 
-    for plot in plots_data:
+    for plot in plots_data[0]:
         # Define chart label
         label = ''
         if plot['ids'] is not None:
-            for id_dict in plot['ids']:
-                label += stringify(next(iter(id_dict.keys()))) + ': ' + stringify(next(iter(id_dict.values())))
-                label += ' - '
-            label = label[:-3]
+            label += stringify(next(iter(plot['ids'].keys()))) + ': ' + stringify(next(iter(plot['ids'].values())))
 
         # List of labels to Identify groups
         groups.append(label)
@@ -167,7 +168,11 @@ def plot_line(plots_data, vlines):
         vline_chart = hv.VLine(vlines[0]).opts(color='blue')
         for vline in vlines:
             vline_chart = vline_chart * hv.VLine(vline).opts(color='blue')
-        return legend_chart * vline_chart
+
+        offset = hv.Scatter(data=plots_data[1])
+        offset = hd.spread(hd.datashade(offset).opts(hv.opts.RGB(height=200, width=750, show_grid=True, title='Time offset')), px=3)
+
+        return hv.Layout((legend_chart * vline_chart) + offset).cols(1)
     else:
         return legend_chart
 
