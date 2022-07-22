@@ -45,7 +45,7 @@ def build_visualization_data(legend, x_parameter, y_parameter, data_sources, tim
         # api.create_plots(list_of_charts, x_parameter, y_parameter, data_sources)
 
         logger.info("Periodic task: FINISH creating plots objects " +
-                    "(" + str((time.time() - start_time) / 60) + "minutes)")
+                    "(" + str(int((time.time() - start_time))) + "seconds)")
 
         return (list_of_charts, offset)
 

@@ -29,7 +29,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
 
     list_of_charts = []
     all_ids = []
-    offset = {}
+    offset = []
     min_val = float('-inf')
     max_val = float('inf')
 
@@ -55,18 +55,17 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
                 legend_id = None
 
             legend_id_name = info_id_legend['legendName'] + ': ' + str(legend_id)
+            parameter_name = parameter_info['parameterName']
 
-            if (legend_id is None) or (legend_id_name in legend_ids):
+            if legend_id_name in legend_ids:
                 # Only check documents that come from a selected data source
                 if data_source in data_sources:
-                    parameter_name = parameter_info['parameterName']
-
                     # 1 file = 1 group = 1 chart
                     if parameter_name == y_parameter:
                         y_display_name = utils.get_display_name(y_parameter, list_parameters)
                         y_unit = parameter_info['unit']
                         data = utils.parse_time_data(parameter_values, time_range)
-                        chart_id = {legend_id_name: legend_id}
+                        chart_id = legend_id_name
 
                         chart_dict = {
                             'x': (x_display_name, None),
@@ -81,17 +80,17 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
                         charts_to_overlay.append(chart_dict)
                         all_ids.append(chart_id)
 
-                    if parameter_name == 'timeoffset':
-                        offset['data'] = utils.parse_time_data(parameter_values, time_range)
+            elif parameter_name == 'timeoffset':
+                offset = utils.parse_time_data(parameter_values, time_range)
 
-            list_of_charts = utils.merge_ids(all_ids, charts_to_overlay)
+        list_of_charts = utils.merge_ids(all_ids, charts_to_overlay)
 
         data = []
-        for offset_tuple in sorted(offset['data']):
+        for offset_tuple in sorted(offset):
             if min_val < offset_tuple[0] < max_val:
                 data.append(offset_tuple)
 
-        offset['data'] = data
+        offset = data
 
     # Every chart that hasn't time as x:
     else:
@@ -115,19 +114,18 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
                 legend_id = None
 
             legend_id_name = info_id_legend['legendName'] + ': ' + str(legend_id)
+            parameter_name = parameter_info['parameterName']
 
-            if (legend_id is None) or (legend_id_name in legend_ids):
+            if legend_id_name in legend_ids:
                 # Only check documents that come from a selected data source
                 if data_source in data_sources:
-                    parameter_name = parameter_info['parameterName']
-
                     # 1 file for 1 group for 1 chart
                     if parameter_name == x_parameter:
                         x_display_name = utils.get_display_name(x_parameter, list_parameters)
                         x_unit = parameter_info['unit']
                         x_data = utils.parse_time_data(parameter_values, time_range)
                         # ids is a list of dict = utils.get_parameter_ids(dict_content, ids_parameters),
-                        x_id = {legend_id_name: legend_id}
+                        x_id = legend_id_name
 
                         x_dict = {
                             'x': (x_display_name, x_unit),
@@ -136,7 +134,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
                         }
 
                         all_x_dicts.append(x_dict)
-                        all_x_ids.append(all_x_ids)
+                        all_x_ids.append(x_id)
 
                     # 1 file for 1 group for 1 chart
                     if parameter_name == y_parameter:
@@ -144,7 +142,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
                         y_unit = parameter_info['unit']
                         y_data = utils.parse_time_data(parameter_values, time_range)
                         # ids is a list of dict = utils.get_parameter_ids(dict_content, ids_parameters),
-                        y_id = {legend_id_name: legend_id}
+                        y_id = legend_id_name
 
                         y_dict = {
                             'y': (y_display_name, y_unit),
@@ -164,7 +162,7 @@ def parse_data(all_data, x_parameter, y_parameter, data_sources, legend_ids, tim
             data = [(i[1], j[1]) for i, j in zip(x_chart['data'], y_chart['data'])]
 
             chart_dict = {
-                'x': x_chart['y'],
+                'x': x_chart['x'],
                 'y': y_chart['y'],
                 'ids': x_chart['ids'],
                 'data': data

@@ -152,9 +152,8 @@ def parse_data(data, time_range):
         step = 1
 
     parsed = []
-    # In Case we only have 1 data point
     if not isinstance(data, list):
-        data = [data]
+        data = []
     for i in range(0, len(data)-1, step):
         parsed_elt = parse_number(data[i])
         if not parsed_elt:
@@ -321,22 +320,21 @@ def merge_ids(ids_list, charts_list):
         parsed_charts = charts_list
     else:
         parsed_charts = []
-        for chart_ids in ids_list:
+        for chart_ids in set(ids_list):
             same_ids_charts = list(filter(lambda l: l['ids'] == chart_ids, charts_list))
             data = []
-            x = next(same_ids_charts['x'])
-            y = next(same_ids_charts['y'])
+            temp_dict = {'ids': chart_ids}
+            if 'x' in same_ids_charts[0]:
+                temp_dict['x'] = same_ids_charts[0]['x']
+            if 'y' in same_ids_charts[0]:
+                temp_dict['y'] = same_ids_charts[0]['y']
+
             for chart in same_ids_charts:
                 data += chart['data']
 
-            parsed_charts.append(
-                {
-                    'x': x,
-                    'y': y,
-                    'ids': chart_ids,
-                    'data': sorted(data)
-                }
-            )
+            temp_dict['data'] = sorted(data)
+            parsed_charts.append(temp_dict)
+
     return parsed_charts
 
 

@@ -56,8 +56,8 @@ def plot_scatter(plots_data, vlines):
     groups = []
 
     # All plots share same x and y so we can take the first one
-    y_tuple = next(plots_data[0])['y']
-    x_tuple = next(plots_data[0])['x']
+    y_tuple = next(iter(plots_data[0]))['y']
+    x_tuple = next(iter(plots_data[0]))['x']
 
     count = 0
     for plot in plots_data[0]:
@@ -65,8 +65,7 @@ def plot_scatter(plots_data, vlines):
         # Define chart label
         label = ''
         if plot['ids'] is not None:
-            if plot['ids'] is not None:
-                label += stringify(next(iter(plot['ids'].keys()))) + ': ' + stringify(next(iter(plot['ids'].values())))
+            label += plot['ids']
 
         # List of labels to Identify groups
         groups.append(label)
@@ -91,10 +90,6 @@ def plot_scatter(plots_data, vlines):
 
     # Datashader removes groups so we add artificial ones (cf. holoviews documentation)
     # len(Sets1to3) is 22, might be too small in some occurrences, now support up to 34 groups
-    print('groups')
-    print(groups)
-    print('colors list')
-    print(colors_list)
     color_key = [(group, color) for group, color in zip(groups, colors_list)]  # Attribute a group to a color
     color_points = hv.NdOverlay({k: hv.Points([0, 0], label=str(k)).opts(color=v, size=0) for k, v in color_key})
 
@@ -105,7 +100,7 @@ def plot_scatter(plots_data, vlines):
         for vline in vlines:
             vline_chart = vline_chart * hv.VLine(vline).opts(color='blue')
 
-        offset = hv.Scatter(data=plots_data[1])
+        offset = hv.Scatter(plots_data[1], 'Time (MJD)', 'Offset (ns)')
         offset = hd.spread(hd.datashade(offset).opts(hv.opts.RGB(height=200, width=750, show_grid=True, title='Time offset')), px=3)
 
         return hv.Layout((legend_chart * vline_chart) + offset).cols(1)
@@ -128,14 +123,14 @@ def plot_line(plots_data, vlines):
     groups = []
 
     # All plots share same x and y so we can take the first one
-    y_tuple = next(plots_data[0])['y']
-    x_tuple = next(plots_data[0])['x']
+    y_tuple = next(iter(plots_data[0]))['y']
+    x_tuple = next(iter(plots_data[0]))['x']
 
     for plot in plots_data[0]:
         # Define chart label
         label = ''
         if plot['ids'] is not None:
-            label += stringify(next(iter(plot['ids'].keys()))) + ': ' + stringify(next(iter(plot['ids'].values())))
+            label += plot['ids']
 
         # List of labels to Identify groups
         groups.append(label)
